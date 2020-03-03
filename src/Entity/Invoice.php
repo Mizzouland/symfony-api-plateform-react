@@ -7,6 +7,8 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * @ApiResource(
@@ -18,6 +20,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     normalizationContext={
  *          "groups"={"invoices_read"}
  *     },
+ *     denormalizationContext={"disable_type_enforcement"=true},
  *     itemOperations={"GET", "PUT", "DELETE",
  *          "increment"={
  *              "method"="POST",
@@ -46,18 +49,22 @@ class Invoice
     /**
      * @ORM\Column(type="float")
      * @Groups({"invoices_read", "customers_read",})
+     * @Assert\NotBlank(message="la date doit etre renseigné")
      */
     private $amount;
 
     /**
      * @ORM\Column(type="datetime")
      * @Groups({"invoices_read", "customers_read",})
+     * @Assert\DateTime(message="La date doit etre au format valide YYYY-MM-DD")
+     * @Assert\NotBlank(message="la date doit etre renseigné")
      */
     private $sentAt;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"invoices_read", "customers_read",})
+     * @Assert\Choice(choices={"SENT", "PAID", "CANCELLED"})
      */
     private $status;
 
@@ -94,7 +101,7 @@ class Invoice
         return $this->amount;
     }
 
-    public function setAmount(float $amount): self
+    public function setAmount($amount): self
     {
         $this->amount = $amount;
 
@@ -106,7 +113,7 @@ class Invoice
         return $this->sentAt;
     }
 
-    public function setSentAt(\DateTimeInterface $sentAt): self
+    public function setSentAt($sentAt): self
     {
         $this->sentAt = $sentAt;
 

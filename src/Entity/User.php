@@ -8,6 +8,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 
 /**
  * @ApiResource(
@@ -16,7 +19,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- *
+ * @UniqueEntity("email", message="l'email est déjà utilisé")
  */
 class User implements UserInterface
 {
@@ -30,6 +33,8 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      * @Groups({"customers_read", "invoices_read"})
+     * @Assert\NotBlank(message="l'email doit être renseigné")
+     * @Assert\Email(message="l'adresse email doit avoir un format valid")
      */
     private $email;
 
@@ -47,12 +52,15 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"customers_read", "invoices_read"})
+     * @Assert\NotBlank(message="le prénom est obligatoire")
+     * @Assert\Length(min="3", minMessage="le prénom doit faire minimum 3 caractère")
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string", length=255))
      * @Groups({"customers_read", "invoices_read"})
+     * @Assert\NotBlank(message="le nom est obligatoire")
      */
     private $lastname;
 
