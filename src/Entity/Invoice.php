@@ -17,6 +17,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     normalizationContext={
  *          "groups"={"invoices_read"}
+ *     },
+ *     itemOperations={"GET", "PUT", "DELETE",
+ *          "increment"={
+ *              "method"="POST",
+ *              "path"="/invoices/{id}/increment",
+ *              "controller"="App\Controller\InvoiceIncrementationController",
+ *              "swagger_context"={
+                    "summary"="INCREMENTE LE CHRONO D'une facture donnée",
+ *                  "description"="incremente le chrono"
+ *               }
+ *          }
  *     }
  * )
  * @ApiFilter(OrderFilter::class, properties={"amount", "sentAt"})

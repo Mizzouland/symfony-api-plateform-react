@@ -4,12 +4,27 @@ namespace App\Controller;
 
 
 use App\Entity\Invoice;
+use Doctrine\Common\Persistence\ObjectManager;
 
 
 class InvoiceIncrementationController{
 
+    /**
+     * @var ObjectManager
+     */
+    private $manager;
+
+    public function __construct(ObjectManager $manager)
+    {
+        $this->manager = $manager;
+    }
+
     public function __invoke(Invoice $data)
     {
-        // TODO: Implement __invoke() method.
+        $data->setChrono($data->getChrono() + 1);
+
+        // $this->manager->persist($data);
+        $this->manager->flush();
+        return $data;
     }
 }
