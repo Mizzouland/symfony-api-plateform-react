@@ -28,3 +28,12 @@ services:
 
     App\Customers\PatchedDateTimeNormalizer:
         tags: [serializer.normalizer]
+
+
+    App\Events\JwtAddSubscriber:
+        tags:
+            - {
+                name: kernel.event_listener,
+                event: lexik_jwt_authentication.on_jwt_created,
+                method: updateJwtData
+                }
