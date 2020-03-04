@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Invoice;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -17,6 +18,21 @@ class InvoiceRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Invoice::class);
+    }
+
+
+    public function findLastChrono(User $user)
+    {
+        return $this->createQueryBuilder("I")
+                ->select("I.chrono")
+                ->join("I.customer", "C")
+                ->where("C.user = :user")
+                ->setParameter("user", $user)
+                ->orderBy("I.chrono", "DESC")
+                ->setMaxResults(1)
+                ->getQuery()
+                ->getSingleScalarResult(); // uniquement le numéro
+
     }
 
     // /**
