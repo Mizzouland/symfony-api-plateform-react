@@ -4,6 +4,7 @@ import axios from "axios";
 const CustomersPage =  (props) => {
 
     const [customers, setCustomers] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         axios.get("http://127.0.0.1:8000/api/clients")
@@ -38,6 +39,20 @@ const CustomersPage =  (props) => {
             });
 
     };
+
+    // fonction qui recoit une page que l'on souhaite afficher
+    const handleChangePage = (page) => {
+        // je vais changer mon currentPage à page
+        setCurrentPage(page);
+    }
+
+    const itemPerPage = 10;
+    const pagesCount = Math.ceil(customers.length / itemPerPage);
+    const pages = [];
+
+    for (let i = 1; i<= pagesCount; i++) {
+        pages.push(i);
+    }
 
     return (
         <>
@@ -86,6 +101,24 @@ const CustomersPage =  (props) => {
                 </tbody>
 
             </table>
+
+
+            <div>
+                <ul className="pagination">
+                    <li className="page-item disabled">
+                        <a className="page-link" href="#">&laquo;</a>
+                    </li>
+                    {pages.map(page =>
+
+                        <li key={page} className={"page-item " + (currentPage === page && "active")}>
+                            <button className="page-link" onClick={() => handleChangePage(page)}> {page} </button>
+                        </li>
+                    )}
+                    <li className="page-item">
+                        <a className="page-link" href="#">&raquo;</a>
+                    </li>
+                </ul>
+            </div>
         </>
 
     );
