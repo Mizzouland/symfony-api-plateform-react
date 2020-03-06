@@ -2,22 +2,30 @@ import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import Pagination from "../components/Pagination";
 
-const CustomersPage =  (props) => {
+const CustomersPagePaginationApi =  (props) => {
 
     const [customers, setCustomers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [search, setSearch] = useState('');
+    const [totalItems, setTotalItems] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const itemPerPage = 15;
 
     // on récupere un effet qui ne depend d'aucune donnée
-
+    // mais maintenant on va l'associer à currentPage
+    // c'est a dire qu'il faudra appeler cette fonction a chaque fois que currentPage change
+    // on va utiliser les backtips pluto que les guillement touche altgr F7 cela nous permet d'integrer plus facilement
+    // des variables javascript
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/api/clients")
-            .then(response => response.data['hydra:member'])
-            .then(data => setCustomers(data))
+        axios.get(`http://127.0.0.1:8000/api/clients?pagination=true&count=${itemPerPage}&page=${currentPage}`)
+            .then(response => {
+                setCustomers(response.data['hydra:member']);
+                setTotalItems(response.data['hydra:totalItems']);
+                setLoading(false);
+            })
             .catch(error => console.log(error.response))
         ;
         // Je veux changer ce qu'il y dans data avec customers et comme j'appelle setCustomers, il me mets tous ca dans customers
-    }, []);
+    }, [currentPage]);
 
 
 
@@ -44,53 +52,22 @@ const CustomersPage =  (props) => {
 
     };
 
-    const handleSearch = (event) => {
-        const value = event.currentTarget.value;
-        setSearch(value);
-        setCurrentPage(1);
-
-    };
-
-
     // fonction qui recoit une page que l'on souhaite afficher
     const handleChangePage = (page) => {
+        setLoading(true);
         // je vais changer mon currentPage à page
         setCurrentPage(page);
     };
 
-    const itemPerPage = 15;
 
-    // je veux garder mes customers que j'ai filtrer par le nom en minuscule
-    // inclue ma recherche que je passe aussi en lowerCase
-    // ou soit le lastname
-    const filteredCustomers = customers.filter(
-        c => c.firstname.toLowerCase().includes(search.toLowerCase())
-            ||
-            c.lastname.toLowerCase().includes(search.toLowerCase())
-            ||
-            c.email.toLowerCase().includes(search.toLowerCase())
-            ||
-            (c.company && c.company.toLowerCase().includes(search.toLowerCase()))
-    );
-    // donc maintenant pour la recherche au lieu d'avoir des curstomers qui sont paginé
-    // je voudrais paginer mes customers qui correspondent à ma recherce
-
-
-    const paginatedCustomers = Pagination.getData(filteredCustomers, currentPage, itemPerPage);
-    // const paginatedCustomers = filteredCustomers.length > itemPerPage ? Pagination.getData(filteredCustomers, currentPage, itemPerPage) : filteredCustomers;
-
-
-    // const paginatedCustomers = Pagination.getData(customers, currentPage, itemPerPage);
+    // on a plus besoin de mapper sur les pagintedCustomers, mais uniquement sur les customers que l'on recoix
+    const paginatedCustomers = Pagination.getData(customers, currentPage, itemPerPage);
 
     // donc au lieu de bouclé sur la customers on va bouclé sur paginatedCustomers
 
     return (
         <>
-            <h1>Liste de clients</h1>
-
-            <div className="form-group">
-                <input type="text" className="form-control" placeholder="Rechercher ... " value={search} onChange={handleSearch}/>
-            </div>
+            <h1>Liste de clients paginations</h1>
 
             <div className="card mt-4">
                 <table className="table table-hover pt-3">
@@ -108,7 +85,17 @@ const CustomersPage =  (props) => {
                     </thead>
 
                     <tbody>
-                    {paginatedCustomers.map(customer =>
+                    {loading && (
+                        <tr>
+                            <td>Chargement...</td>
+                        </tr>
+                    )}
+
+
+                    {
+                        /** Si je ne fais pas le loading alors je fais le custommer map **/
+
+                        !loading && customers.map(customer =>
 
 
                         <tr key={customer.id}>
@@ -138,15 +125,13 @@ const CustomersPage =  (props) => {
 
                 </table>
 
-
-                {itemPerPage < filteredCustomers.length &&
                 <Pagination
+
                     currentPage={currentPage}
                     itemsPerPage={itemPerPage}
-                    length={filteredCustomers.length}
+                    length={totalItems}
                     onPageChanged={handleChangePage}
                 />
-                }
 
             </div>
 
@@ -156,4 +141,4 @@ const CustomersPage =  (props) => {
 };
 
 
-export default CustomersPage;
+export default CustomersPagePaginationApi;
