@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
+import Pagination from "../components/Pagination";
 
 const CustomersPage =  (props) => {
 
@@ -47,18 +48,8 @@ const CustomersPage =  (props) => {
     };
 
     const itemPerPage = 15;
-    const pagesCount = Math.ceil(customers.length / itemPerPage);
-    const pages = [];
 
-    for (let i = 1; i<= pagesCount; i++) {
-        pages.push(i);
-    }
-
-    // il nous faut deux valeur
-    // d'où on part (start) pendant combien (itemsPerPage)
-    const start = currentPage * itemPerPage - itemPerPage;
-    // imaginons que nous sommes sur la page numéro 3 * 10 - 10 = 20 --> on partirai de 20
-    const paginatedCustomers = customers.slice(start, start + itemPerPage);
+    const paginatedCustomers = Pagination.getData(customers, currentPage, itemPerPage);
 
     // donc au lieu de bouclé sur la customers on va bouclé sur paginatedCustomers
 
@@ -112,24 +103,14 @@ const CustomersPage =  (props) => {
 
                 </table>
 
+                <Pagination
 
-                <div>
-                    <ul className="pagination">
-                        <li className={"page-item " + (currentPage === 1 && "disabled")}>
-                            <button className="page-link" onClick={ () => handleChangePage(currentPage - 1)}>&laquo;</button>
-                        </li>
-                        {pages.map(page =>
+                    currentPage={currentPage}
+                    itemsPerPage={itemPerPage}
+                    length={customers.length}
+                    onPageChanged={handleChangePage}
+                />
 
-                            <li key={page} className={"page-item " + (currentPage === page && "active")}>
-                                <button className="page-link" onClick={() => handleChangePage(page)}> {page} </button>
-                            </li>
-                        )}
-                        <li className=
-                                {"page-item " + (currentPage === pagesCount && "disabled")}>
-                            <a className="page-link"  onClick={ () => handleChangePage(currentPage + 1)}>&raquo;</a>
-                        </li>
-                    </ul>
-                </div>
             </div>
 
         </>
