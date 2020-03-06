@@ -44,9 +44,9 @@ const CustomersPage =  (props) => {
     const handleChangePage = (page) => {
         // je vais changer mon currentPage à page
         setCurrentPage(page);
-    }
+    };
 
-    const itemPerPage = 10;
+    const itemPerPage = 15;
     const pagesCount = Math.ceil(customers.length / itemPerPage);
     const pages = [];
 
@@ -54,11 +54,21 @@ const CustomersPage =  (props) => {
         pages.push(i);
     }
 
+    // il nous faut deux valeur
+    // d'où on part (start) pendant combien (itemsPerPage)
+    const start = currentPage * itemPerPage - itemPerPage;
+    // imaginons que nous sommes sur la page numéro 3 * 10 - 10 = 20 --> on partirai de 20
+    const paginatedCustomers = customers.slice(start, start + itemPerPage);
+
+    // donc au lieu de bouclé sur la customers on va bouclé sur paginatedCustomers
+
     return (
         <>
             <h1>Liste de clients</h1>
-            <table className="table table-hover pt-3">
-                <thead>
+
+            <div className="card mt-4">
+                <table className="table table-hover pt-3">
+                    <thead>
                     <tr>
                         <th>Id.</th>
                         <th>Client</th>
@@ -69,56 +79,59 @@ const CustomersPage =  (props) => {
                         <th>Action</th>
 
                     </tr>
-                </thead>
+                    </thead>
 
-                <tbody>
-                {customers.map(customer =>
-
-
-                    <tr key={customer.id}>
-                        <td>{customer.id}</td>
-                        <td>
-                            <a href="#">{customer.firstname} {customer.lastname}</a>
-                        </td>
-                        <td>{customer.email}</td>
-                        <td>{customer.company}</td>
-                        <td className="text-center">
-                            <span className="badge badge-success">{customer.invoices.length}</span>
-
-                        </td>
-                        <td className="text-center">
-                            {customer.totalInvoices.toLocaleString()} euro
-                        </td>
-                        <td>
-                            <a href="#" className="btn btn-primary btn-sm mr-2">Editer</a>
-                            <button
-                                onClick={ () => handleDelete(customer.id)}
-                                disabled={customer.invoices.length > 0}
-                                className="btn btn-danger btn-sm">Supprimer</button>
-                        </td>
-                    </tr>
-                )}
-                </tbody>
-
-            </table>
+                    <tbody>
+                    {paginatedCustomers.map(customer =>
 
 
-            <div>
-                <ul className="pagination">
-                    <li className="page-item disabled">
-                        <a className="page-link" href="#">&laquo;</a>
-                    </li>
-                    {pages.map(page =>
+                        <tr key={customer.id}>
+                            <td>{customer.id}</td>
+                            <td>
+                                <a href="#">{customer.firstname} {customer.lastname}</a>
+                            </td>
+                            <td>{customer.email}</td>
+                            <td>{customer.company}</td>
+                            <td className="text-center">
+                                <span className="badge badge-success">{customer.invoices.length}</span>
 
-                        <li key={page} className={"page-item " + (currentPage === page && "active")}>
-                            <button className="page-link" onClick={() => handleChangePage(page)}> {page} </button>
-                        </li>
+                            </td>
+                            <td className="text-center">
+                                {customer.totalInvoices.toLocaleString()} euro
+                            </td>
+                            <td>
+                                <a href="#" className="btn btn-primary btn-sm mr-2">Editer</a>
+                                <button
+                                    onClick={ () => handleDelete(customer.id)}
+                                    disabled={customer.invoices.length > 0}
+                                    className="btn btn-danger btn-sm">Supprimer</button>
+                            </td>
+                        </tr>
                     )}
-                    <li className="page-item">
-                        <a className="page-link" href="#">&raquo;</a>
-                    </li>
-                </ul>
+                    </tbody>
+
+                </table>
+
+
+                <div>
+                    <ul className="pagination">
+                        <li className={"page-item " + (currentPage === 1 && "disabled")}>
+                            <button className="page-link" onClick={ () => handleChangePage(currentPage - 1)}>&laquo;</button>
+                        </li>
+                        {pages.map(page =>
+
+                            <li key={page} className={"page-item " + (currentPage === page && "active")}>
+                                <button className="page-link" onClick={() => handleChangePage(page)}> {page} </button>
+                            </li>
+                        )}
+                        <li className=
+                                {"page-item " + (currentPage === pagesCount && "disabled")}>
+                            <a className="page-link"  onClick={ () => handleChangePage(currentPage + 1)}>&raquo;</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
+
         </>
 
     );
