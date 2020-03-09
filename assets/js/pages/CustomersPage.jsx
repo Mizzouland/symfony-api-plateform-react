@@ -2,26 +2,45 @@ import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import Pagination from "../components/Pagination";
 
+import customersAPI from "../services/customersAPI";
+
 const CustomersPage =  (props) => {
 
     const [customers, setCustomers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState('');
 
+
+    const fetchCustomers = async () => {
+        try {
+            const data = await customersAPI.findAll();
+            setCustomers(data);
+        } catch (error) {
+            console.log(error.response);
+        }
+    };
+
     // on récupere un effet qui ne depend d'aucune donnée
 
-    useEffect(() => {
-        axios.get("http://127.0.0.1:8000/api/clients")
-            .then(response => response.data['hydra:member'])
-            .then(data => setCustomers(data))
-            .catch(error => console.log(error.response))
-        ;
+    useEffect( () => {
+
+        fetchCustomers();
+
+        /**
+
+         customersAPI.findAll()
+         .then(data => setCustomers(data))
+         .catch(error => console.log(error.response));
+
+         */
+
+
         // Je veux changer ce qu'il y dans data avec customers et comme j'appelle setCustomers, il me mets tous ca dans customers
     }, []);
 
 
 
-    const handleDelete = id => {
+    const handleDelete = async id => {
         // 0 . on fait une copie du data avant la suppression
         const originalCustomers = [...customers];
 
@@ -32,16 +51,29 @@ const CustomersPage =  (props) => {
         // 2 - l'approche pessimiste : opopop on appelle l'api et si la suppression s'est bien déroulé
         // alors on met à jour l'affichage
         // l'aspect pessimiste rogne sur l'aspect reactif
-        axios.delete("http://127.0.0.1:8000/api/customers/" + id)
-            .then(response => console.log('ok'))
-            .catch(error => {
+
+        /**
+         axios.delete("http://127.0.0.1:8000/api/customers/" + id)
+         .then(response => console.log('ok'))
+         .catch(error => {
                 // si cela n'a pas marché, je remet dans mon tableau le tableau original
                 setCustomers(originalCustomers);
 
                 console.log(error.response)
 
-            });
+         });
+         */
 
+
+        // deux version de promesse
+        try {
+            await axios.delete("http://127.0.0.1:8000/api/customers/" + id);
+        } catch (error) {
+            // si cela n'a pas marché, je remet dans mon tableau le tableau original
+            setCustomers(originalCustomers);
+
+            console.log(error.response)
+        }
     };
 
     const handleSearch = (event) => {
