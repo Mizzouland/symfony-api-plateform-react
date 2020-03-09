@@ -21,6 +21,7 @@ const STATUS_LABELS = {
 const InvoicesPage = props => {
 
     const [invoices, setInvoices] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
 
     const fetchInvoices = async () => {
         try {
@@ -39,6 +40,17 @@ const InvoicesPage = props => {
         fetchInvoices();
     }, []);
 
+    // fonction qui recoit une page que l'on souhaite afficher
+    const handleChangePage = (page) => {
+        // je vais changer mon currentPage à page
+        setCurrentPage(page);
+    };
+
+    const itemPerPage = 20;
+
+    const paginatedCustomers = Pagination.getData(invoices, currentPage, itemPerPage);
+
+
     return (
       <>
         <h1>Liste des factures</h1>
@@ -54,8 +66,8 @@ const InvoicesPage = props => {
                   </tr>
               </thead>
               <tbody>
-              {invoices.map(invoice =>
 
+              {paginatedCustomers.map(invoice =>
                   <tr key={invoice.id}>
                       <td>{invoice.chrono}</td>
                       <td>
@@ -69,8 +81,16 @@ const InvoicesPage = props => {
                       <td></td>
                   </tr>
               )}
+
               </tbody>
           </table>
+
+          <Pagination
+              currentPage={currentPage}
+              itemsPerPage={itemPerPage}
+              length={invoices.length}
+              onPageChanged={handleChangePage}
+          />
 
       </>
     );
