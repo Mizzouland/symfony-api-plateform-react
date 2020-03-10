@@ -46,6 +46,7 @@ const CustomersPage =  (props) => {
 
         // 1 . l'approche optimiste : l'api dans tous les cas marche
         // supprimer de l'affichage, donc cela correspont à mon tableau moins l'id que j'ai supprimer
+        // cela correpond à un tableau des customer sauf celui que j'ai supprimer
         setCustomers(customers.filter(customer => customer.id !== id));
 
         // 2 - l'approche pessimiste : opopop on appelle l'api et si la suppression s'est bien déroulé
