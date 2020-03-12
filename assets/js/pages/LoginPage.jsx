@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import axios from 'axios';
+import AuthAPI from "../services/AuthAPI";
 
 const LoginPage = (props) => {
     const [credentials, setCredentials] = useState({
@@ -8,6 +9,7 @@ const LoginPage = (props) => {
     });
     const [error, setError] = useState("");
 
+    // GESTION DES CHAMPS
     const handleChange = (event) => {
         const value = event.currentTarget.value;
         const name = event.currentTarget.name;
@@ -15,24 +17,12 @@ const LoginPage = (props) => {
         setCredentials({...credentials, [name]: value})
     };
 
+    // GESTION DU SUBMIT
     const handleSubmit = async event => {
             event.preventDefault();
-
             try {
-                const token = await axios.post("http://127.0.0.1:8000/api/login_check", credentials)
-                    .then(response => response.data.token);
-
-                // apres avoir récupèrer le token
+                await AuthAPI.authenticate(credentials);
                 setError('');
-
-                // je stocke le token dans le localStorage
-                window.localStorage.setItem("authToken", token);
-
-                // il faut que pour axios toute requète est un header avec authorisation et on va lui ajouter une configuration par défaut
-                axios.defaults.headers["Authorization"] =  "Bearer "+token;
-
-                // maintenant axios est au courant que toutes les requètes que je fais , il y a un token d'authorisation
-                // alors attention cela ne marche qu'une seule fois
 
             } catch (e) {
                 console.log(error.message);
@@ -55,7 +45,6 @@ const LoginPage = (props) => {
                         id="username"
                         value={credentials.username}
                         onChange={handleChange}
-
                         className={"form-control " + (error && " is-invalid") }
 
                     />
