@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import '../css/app.css';
 import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
-import { HashRouter , Switch, Route} from "react-router-dom";
+import { HashRouter , Switch, Route, withRouter} from "react-router-dom";
 import CustomersPage from "./pages/CustomersPage";
 import CustomersPagePaginationApi from "./pages/CustomersPagePaginationApi";
 import InvoicesPage from "./pages/InvoicesPage";
@@ -20,12 +20,13 @@ console.log('Hello Webpack Encore!!! Edit me in assets/js/app.js');
 AuthAPI.setUp();
 
 const App = () => {
-    // TODO : il faudrait par défaut qu'on demande à notre AuthAPI si on est connecté ou pas
     const [isAuthenticated, setIsAuthenticated] = useState(AuthAPI.isAuthenticated());
-    console.log(isAuthenticated);
+
+    // comme la navbar ne fait pas partie du composant Route
+    const NavbarWithRouter =  withRouter(Navbar);
 
     return <HashRouter>
-            <Navbar isAuthenticated ={isAuthenticated} onLogout={setIsAuthenticated}/>
+            <NavbarWithRouter isAuthenticated ={isAuthenticated} onLogout={setIsAuthenticated}/>
 
             <main className="container pt-5">
                 <Switch>
@@ -33,6 +34,7 @@ const App = () => {
                        render={ props => (
                            <LoginPage
                                 onLogin={setIsAuthenticated}
+                                {...props}
                            />
                        )}
                     />
