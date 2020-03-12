@@ -1,4 +1,4 @@
-import React from 'react';
+import React , {useState} from 'react';
 import ReactDOM from "react-dom";
 
 // any CSS you import will output into a single css file (app.css in this case)
@@ -20,12 +20,22 @@ console.log('Hello Webpack Encore!!! Edit me in assets/js/app.js');
 AuthAPI.setUp();
 
 const App = () => {
+    // TODO : il faudrait par défaut qu'on demande à notre AuthAPI si on est connecté ou pas
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    console.log(isAuthenticated);
+
     return <HashRouter>
-            <Navbar/>
+            <Navbar isAuthenticated ={isAuthenticated} onLogout={setIsAuthenticated}/>
 
             <main className="container pt-5">
                 <Switch>
-                    <Route path="/login" component={LoginPage} />
+                    <Route path="/login"
+                       render={ props => (
+                           <LoginPage
+                                onLogin={setIsAuthenticated}
+                           />
+                       )}
+                    />
                     <Route path="/customers" component={CustomersPage} />
                     <Route path="/invoices" component={InvoicesPage} />
                     <Route path="/" component={HomePage} />

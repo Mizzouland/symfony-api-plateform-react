@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import axios from 'axios';
 import AuthAPI from "../services/AuthAPI";
 
-const LoginPage = (props) => {
+const LoginPage = ({onLogin}) => {
     const [credentials, setCredentials] = useState({
         username:  "",
         password: ""
@@ -23,6 +23,7 @@ const LoginPage = (props) => {
             try {
                 await AuthAPI.authenticate(credentials);
                 setError('');
+                onLogin(true);
 
             } catch (e) {
                 console.log(error.message);
