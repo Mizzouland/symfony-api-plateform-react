@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import '../css/app.css';
 import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
-import { HashRouter , Switch, Route, withRouter} from "react-router-dom";
+import { HashRouter , Switch, Route, withRouter, Redirect} from "react-router-dom";
 import CustomersPage from "./pages/CustomersPage";
 import CustomersPagePaginationApi from "./pages/CustomersPagePaginationApi";
 import InvoicesPage from "./pages/InvoicesPage";
@@ -18,6 +18,13 @@ import AuthAPI from "./services/AuthAPI";
 console.log('Hello Webpack Encore!!! Edit me in assets/js/app.js');
 
 AuthAPI.setUp();
+
+const PrivateRoute = ({path, isAuthenticated, component}) => {
+    return isAuthenticated ? <Route path={path} component={component} /> : <Redirect to="/login"/>
+};
+
+
+
 
 const App = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(AuthAPI.isAuthenticated());
@@ -38,8 +45,16 @@ const App = () => {
                            />
                        )}
                     />
-                    <Route path="/customers" component={CustomersPage} />
-                    <Route path="/invoices" component={InvoicesPage} />
+
+                    <PrivateRoute path="/customers"  isAuthenticated={isAuthenticated}  component={CustomersPage} />
+
+
+                    <Route path="/invoices"
+                        render={ props => {
+                            if (isAuthenticated) return <InvoicesPage {...props} />;
+                            return <Redirect to="/login"/>;
+                        }}
+                    />
                     <Route path="/" component={HomePage} />
                 </Switch>
             </main>
