@@ -48,8 +48,25 @@ function setUp()
 
 }
 
+
+function isAuthenticated() {
+    // 1 . voir si on a un token
+    const token = window.localStorage.getItem("authToken");
+
+    // 2 . si le token est encore valide
+    if (token) {
+        const {exp : expiration} = jwtDecode(token);
+           if (expiration * 1000 > new Date().getTime()) {
+               return true;
+            }
+           return false;
+    }
+    return false;
+}
+
 export default {
     authenticate,
     logout,
-    setUp
+    setUp,
+    isAuthenticated
 }

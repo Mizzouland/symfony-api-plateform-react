@@ -21,7 +21,7 @@ AuthAPI.setUp();
 
 const App = () => {
     // TODO : il faudrait par défaut qu'on demande à notre AuthAPI si on est connecté ou pas
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(AuthAPI.isAuthenticated());
     console.log(isAuthenticated);
 
     return <HashRouter>
