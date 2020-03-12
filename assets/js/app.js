@@ -1,4 +1,4 @@
-import React , {useState} from 'react';
+import React , {useState, useContext} from 'react';
 import ReactDOM from "react-dom";
 
 // any CSS you import will output into a single css file (app.css in this case)
@@ -12,6 +12,8 @@ import InvoicesPage from "./pages/InvoicesPage";
 import LoginPage from "./pages/LoginPage";
 import AuthAPI from "./services/AuthAPI";
 
+import AuthContext from "./contexts/AuthContext";
+
 // Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
 // import $ from 'jquery';
 
@@ -19,7 +21,9 @@ console.log('Hello Webpack Encore!!! Edit me in assets/js/app.js');
 
 AuthAPI.setUp();
 
-const PrivateRoute = ({path, isAuthenticated, component}) => {
+const PrivateRoute = ({path, component}) => {
+
+    const {isAuthenticated} = useContext(AuthContext);
     return isAuthenticated ? <Route path={path} component={component} /> : <Redirect to="/login"/>
 };
 
@@ -32,37 +36,44 @@ const App = () => {
     // comme la navbar ne fait pas partie du composant Route
     const NavbarWithRouter =  withRouter(Navbar);
 
-    return <HashRouter>
-            <NavbarWithRouter isAuthenticated ={isAuthenticated} onLogout={setIsAuthenticated}/>
+    const contextValue = {
+        isAuthenticated: isAuthenticated,
+        setIsAuthenticated: setIsAuthenticated
+    };
 
-            <main className="container pt-5">
-                <Switch>
-                    <Route path="/login"
-                       render={ props => (
-                           <LoginPage
-                                onLogin={setIsAuthenticated}
-                                {...props}
-                           />
-                       )}
-                    />
+    return (
+        <AuthContext.Provider value={contextValue}>
+            <HashRouter>
+                <NavbarWithRouter />
 
-                    <PrivateRoute path="/customers"  isAuthenticated={isAuthenticated}  component={CustomersPage} />
+                <main className="container pt-5">
+                    <Switch>
+                        <Route path="/login" component={LoginPage}/>
 
+                        <PrivateRoute path="/customers"  component={CustomersPage} />
 
-                    <Route path="/invoices"
-                        render={ props => {
-                            if (isAuthenticated) return <InvoicesPage {...props} />;
-                            return <Redirect to="/login"/>;
-                        }}
-                    />
-                    <Route path="/" component={HomePage} />
-                </Switch>
-            </main>
+                        <Route path="/invoices"
+                               render={ props => {
+                                   if (isAuthenticated) return <InvoicesPage {...props} />;
+                                   return <Redirect to="/login"/>;
+                               }}
+                        />
 
-        </HashRouter>;
+                        <Route path="/" component={HomePage} />
+
+                    </Switch>
+                </main>
+
+            </HashRouter>
+
+        </AuthContext.Provider>
+        )
+    ;
 };
 
 
 
 const rootElement = document.querySelector("#app");
 ReactDOM.render(<App />, rootElement);
+
+
