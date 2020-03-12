@@ -10,13 +10,14 @@ import CustomersPage from "./pages/CustomersPage";
 import CustomersPagePaginationApi from "./pages/CustomersPagePaginationApi";
 import InvoicesPage from "./pages/InvoicesPage";
 import LoginPage from "./pages/LoginPage";
+import AuthAPI from "./services/AuthAPI";
 
 // Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
 // import $ from 'jquery';
 
 console.log('Hello Webpack Encore!!! Edit me in assets/js/app.js');
 
-
+AuthAPI.setUp();
 
 const App = () => {
     return <HashRouter>
