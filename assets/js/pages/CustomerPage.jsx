@@ -1,15 +1,16 @@
 import React , {useState} from 'react';
 import Field from "../components/forms/Field";
 import {Link} from "react-router-dom";
+import axios from "axios";
 
 const CustomerPage = (props) => {
 
     // 1 - si on donne un state et une value il faut automatiquement donner une propriété onChange
     const [customer, setCustomer] = useState({
-        lastName : "Stephane",
-        firstName : 'PRAUD',
-        email: 'stephanepraud@hotmail.fr',
-        company: 'Police Nationale'
+        lastname : "",
+        firstname : '',
+        email: '',
+        company: ''
     });
 
     const [errors, setErrors] = useState({
@@ -37,9 +38,16 @@ const CustomerPage = (props) => {
      */
 
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log(customer);
+        try {
+            // je vais attendre la réponse de axios avec une requete en post
+            // et quant on envoie une requete en post nous ajoutons un objet qui sera customer
+           const response =  await axios.post('http://127.0.0.1:8000/api/customers', customer);
+           console.log(response)
+        } catch (error) {
+            console.log(error.response);
+        }
     };
 
     return (
@@ -47,10 +55,10 @@ const CustomerPage = (props) => {
             <h1>Création d'un client</h1>
 
             <form onSubmit={handleSubmit}>
-                <Field name="lastName" label="Nom de famille" placeholder="Nom de famille du client"
-                       value={customer.lastName} onChange={handleChange} error={errors.lastName}/>
-                <Field name="firstName" label="Prénom" placeholder="Prénom du client"
-                       value={customer.firstName} onChange={handleChange} error={errors.firstName}/>
+                <Field name="lastname" label="Nom de famille" placeholder="Nom de famille du client"
+                       value={customer.lastname} onChange={handleChange} error={errors.lastName}/>
+                <Field name="firstname" label="Prénom" placeholder="Prénom du client"
+                       value={customer.firstname} onChange={handleChange} error={errors.firstName}/>
                 <Field name="email" label="Email" placeholder="Email du client" type="email"
                        value={customer.email}  onChange={handleChange} error={errors.email}/>
                 <Field name="company" label="Entreprise" placeholder="Entreprise du client" type="text"
