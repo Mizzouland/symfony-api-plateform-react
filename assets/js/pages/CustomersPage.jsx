@@ -3,6 +3,7 @@ import axios from "axios";
 import Pagination from "../components/Pagination";
 
 import customersAPI from "../services/customersAPI";
+import {Link} from "react-router-dom";
 
 const CustomersPage =  (props) => {
 
@@ -119,7 +120,12 @@ const CustomersPage =  (props) => {
 
     return (
         <>
-            <h1>Liste de clients</h1>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <h1>Liste de clients</h1>
+
+                <Link className="btn btn-primary" to="/customer/create">Créer un client</Link>
+            </div>
+
 
             <div className="form-group">
                 <input type="text" className="form-control" placeholder="Rechercher ... " value={search} onChange={handleSearch}/>
