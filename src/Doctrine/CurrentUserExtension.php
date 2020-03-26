@@ -8,6 +8,7 @@ use App\Entity\Customer;
 use App\Entity\Invoice;
 use App\Entity\User;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Security;
 
@@ -81,7 +82,7 @@ class CurrentUserExtension implements QueryCollectionExtensionInterface , QueryI
             $rootAlias = $queryBuilder->getRootAliases()[0];
 
             if ($resourceClass === Customer::class) {
-                $queryBuilder->andWhere("$rootAlias.user =: user");
+                $queryBuilder->andWhere("$rootAlias.user = :user");
 
             } elseif ($resourceClass === Invoice::class) {
 
