@@ -14,8 +14,8 @@ const CustomerPage = (props) => {
     });
 
     const [errors, setErrors] = useState({
-        lastName : "",
-        firstName : '',
+        lastname : "",
+        firstname : '',
         email: '',
         company: ''
     });
@@ -44,9 +44,16 @@ const CustomerPage = (props) => {
             // je vais attendre la réponse de axios avec une requete en post
             // et quant on envoie une requete en post nous ajoutons un objet qui sera customer
            const response =  await axios.post('http://127.0.0.1:8000/api/customers', customer);
-           console.log(response)
+           setErrors({});
         } catch (error) {
-            console.log(error.response);
+            const violations = error.response.data.violations;
+            const apiErrors = {};
+            if(error.response.data.violations){
+                error.response.data.violations.forEach(violation => {
+                    apiErrors[violation.propertyPath] = violation.message
+                })
+            }
+            setErrors(apiErrors);
         }
     };
 
@@ -56,9 +63,9 @@ const CustomerPage = (props) => {
 
             <form onSubmit={handleSubmit}>
                 <Field name="lastname" label="Nom de famille" placeholder="Nom de famille du client"
-                       value={customer.lastname} onChange={handleChange} error={errors.lastName}/>
+                       value={customer.lastname} onChange={handleChange} error={errors.lastname}/>
                 <Field name="firstname" label="Prénom" placeholder="Prénom du client"
-                       value={customer.firstname} onChange={handleChange} error={errors.firstName}/>
+                       value={customer.firstname} onChange={handleChange} error={errors.firstname}/>
                 <Field name="email" label="Email" placeholder="Email du client" type="email"
                        value={customer.email}  onChange={handleChange} error={errors.email}/>
                 <Field name="company" label="Entreprise" placeholder="Entreprise du client" type="text"
