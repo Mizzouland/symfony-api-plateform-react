@@ -18,12 +18,12 @@ const CustomerPage = (props) => {
 
         try {
             const data = await axios
-                .get("http://localhost:8000/api/customers/" + id)
+                .get("http://127.0.0.1:8000/api/customers/" + id)
                 .then(response => response.data);
 
             const {firstname, lastname, email, company} = data;
             setCustomer({firstname, lastname, email, company});
-        }catch (error) {
+        } catch (error) {
             console.log(error.response);
         }
     };
