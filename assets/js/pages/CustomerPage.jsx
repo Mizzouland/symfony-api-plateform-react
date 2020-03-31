@@ -2,6 +2,7 @@ import React , {useState, useEffect} from 'react';
 import Field from "../components/forms/Field";
 import {Link} from "react-router-dom";
 import axios from "axios";
+import customersAPI from "../services/customersAPI";
 
 const CustomerPage = (props) => {
 
@@ -14,21 +15,26 @@ const CustomerPage = (props) => {
     // ET PAR DEFAUT NOUS NE SOMMES PAS EN TRAIN D'EDITER
     const [editing, setEditing] = useState(false);
     // je vais recevoir une réponse que je vais extraire de response.data
+
+
+    // Récupération du customer en fonction de l'identifiant
     const fetchCustomer = async id => {
 
         try {
-            const data = await axios
-                .get("http://127.0.0.1:8000/api/customers/" + id)
-                .then(response => response.data);
+            const data = await customersAPI.findFirst(id);
 
+            // on destructurise la constante data renvoyé par l'api
             const {firstname, lastname, email, company} = data;
             setCustomer({firstname, lastname, email, company});
         } catch (error) {
             console.log(error.response);
+            // TODO : Notification flash d'une erreure
+            props.history.replace("/customers");
         }
     };
 
     // ON effectue un useEffect a chaque fois que la variable id va changer
+    // Chargement du customer si besoin au chargement du composant ou au chargement de l'identifiant
     useEffect(() => {
         if (id !== 'create') {
             setEditing(true);
@@ -53,6 +59,7 @@ const CustomerPage = (props) => {
         company: ''
     });
 
+    // GESTION DES CHANGEMENTS DES INPUTS DANS LE FORMULAIRE
     const handleChange = (event) => {
         const value = event.currentTarget.value;
         const name = event.currentTarget.name;
@@ -71,18 +78,19 @@ const CustomerPage = (props) => {
      */
 
 
+    //  GESTION DE LA SOUMMISION DU FORMULAIRE
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
             if (editing) {
-                const response =  await axios.put('http://127.0.0.1:8000/api/customers/'+id, customer);
+                const response =  await customersAPI.update(id, customer);
                 console.log(response.data);
                 // TODO : FLASH DE NOTIFICATION DE SUCCES
 
             } else {
                 // je vais attendre la réponse de axios avec une requete en post
                 // et quant on envoie une requete en post nous ajoutons un objet qui sera customer
-                const response =  await axios.post('http://127.0.0.1:8000/api/customers', customer);
+                const response =  await customersAPI.create(customer);
 
                 // TODO : FLASH DE NOTIFICATION DE SUCCES
                 props.history.replace("/customers")
