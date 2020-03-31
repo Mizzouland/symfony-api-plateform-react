@@ -77,10 +77,15 @@ const CustomerPage = (props) => {
             if (editing) {
                 const response =  await axios.put('http://127.0.0.1:8000/api/customers/'+id, customer);
                 console.log(response.data);
+                // TODO : FLASH DE NOTIFICATION DE SUCCES
+
             } else {
                 // je vais attendre la réponse de axios avec une requete en post
                 // et quant on envoie une requete en post nous ajoutons un objet qui sera customer
                 const response =  await axios.post('http://127.0.0.1:8000/api/customers', customer);
+
+                // TODO : FLASH DE NOTIFICATION DE SUCCES
+                props.history.replace("/customers")
             }
 
 
@@ -94,6 +99,8 @@ const CustomerPage = (props) => {
                 })
             }
             setErrors(apiErrors);
+            // TODO : FLASH DE NOTIFICATION DES ERREURES
+
         }
     };
 
