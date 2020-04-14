@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import Pagination from "../components/Pagination";
 import moment from "moment";
+import {Link} from "react-router-dom";
 
 
 const STATUS_CLASSES = {
@@ -94,8 +95,12 @@ const InvoicesPage = props => {
 
     return (
       <>
-        <h1>Liste des factures</h1>
 
+          <div className="d-flex justify-content-between align-items-center mb-3">
+              <h1>Liste des factures</h1>
+
+              <Link className="btn btn-primary" to="/invoice/create">Créer une facture</Link>
+          </div>
 
           <div className="form-group">
               <input type="text" className="form-control" placeholder="Rechercher ... " value={search} onChange={handleSearch}/>

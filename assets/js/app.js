@@ -14,6 +14,7 @@ import AuthAPI from "./services/AuthAPI";
 
 import AuthContext from "./contexts/AuthContext";
 import CustomerPage from "./pages/CustomerPage";
+import InvoicePage from "./pages/InvoicePage";
 
 // Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
 // import $ from 'jquery';
@@ -52,6 +53,7 @@ const App = () => {
                         <Route path="/login" component={LoginPage}/>
                         <PrivateRoute path="/customer/:id"  component={CustomerPage} />
                         <PrivateRoute path="/customers"  component={CustomersPage} />
+                        <PrivateRoute path="/invoice/:id"  component={InvoicePage} />
 
                         <Route path="/invoices"
                                render={ props => {
