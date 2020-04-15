@@ -62,20 +62,30 @@ const InvoicePage = ({history}) => {
        event.preventDefault();
        console.log(invoice);
 
-            // copie de l'invoice {...invoice
-            // dans lequel on écrase customer
+
+       try {
+           // copie de l'invoice {...invoice
+           // dans lequel on écrase customer
 
            const response = await axios.post("http://127.0.0.1:8000/api/invoices",
                {...invoice, customer:`/api/customers/${invoice.customer}`
 
                });
            // TODO FLASH NOTIFICATION
-            history.replace("/invoices");
+           history.replace("/invoices");
            console.log(response);
-       try {
-
+           setErrors({});
        } catch (error) {
-           console.log(error.response);
+           const violations = error.response.data.violations;
+           const apiErrors = {};
+           if(error.response.data.violations){
+               error.response.data.violations.forEach(violation => {
+                   apiErrors[violation.propertyPath] = violation.message
+               })
+           }
+           setErrors(apiErrors);
+           // TODO : FLASH DE NOTIFICATION DES ERREURES
+
        }
     };
 

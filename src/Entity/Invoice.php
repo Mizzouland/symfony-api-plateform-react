@@ -49,7 +49,7 @@ class Invoice
     /**
      * @ORM\Column(type="float")
      * @Groups({"invoices_read", "customers_read",})
-     * @Assert\NotBlank(message="la date doit etre renseigné")
+     * @Assert\NotBlank(message="Le montant doit etre renseigné")
      */
     private $amount;
 
