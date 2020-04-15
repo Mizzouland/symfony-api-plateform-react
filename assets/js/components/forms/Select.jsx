@@ -5,7 +5,13 @@ const Select = ({name, value, error, label, onChange, children}) => {
       <>
           <div className="form-group">
               <label htmlFor={name}>{label}</label>
-              <select onChange={onChange} name={name} id={name} className={"form-control " + (error && " is-invalid")}>
+              <select
+                  onChange={onChange}
+                  name={name}
+                  id={name}
+                  value={value}
+                  className={"form-control " + (error && " is-invalid")}
+              >
                   {children}
               </select>
               <p className="invalid-feedback">{error}</p>
