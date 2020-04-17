@@ -40,7 +40,7 @@ const Navbar = ({history}) => {
                                 <NavLink to="/login" className="btn btn-success">Connexion</NavLink>
                             </li>
                             <li className="nav-item">
-                                <NavLink to="#" className="btn btn-secondary">Inscription</NavLink>
+                                <NavLink to="/register" className="btn btn-secondary">Inscription</NavLink>
                             </li>
                         </>
                     )) || (
