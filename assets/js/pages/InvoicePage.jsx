@@ -11,6 +11,11 @@ const InvoicePage = ({history, match}) => {
 
     const { id = "create" } = match.params;
 
+    // PARTIE 8 - DETERMINATION DU MODE EDITION OU CREATION et par défaut nous sommes en mode création
+    const [editing, setEditing] = useState(false);
+
+
+
     // PARTIE 1 - CREATION D'UN STATE
     const [invoice, setInvoice] = useState({
         amount: "",
@@ -89,6 +94,8 @@ const InvoicePage = ({history, match}) => {
     useEffect(() => {
         // Fonction qui va chercher une facture
         if (id !== 'create') {
+            // PARTIE 8 - 1 SI ON EST EN MODE EDITION ON PASSE LE EDITING A TRUE
+            setEditing(true);
             fetchInvoice(id);
 
         }
@@ -101,15 +108,33 @@ const InvoicePage = ({history, match}) => {
 
 
        try {
+
+
            // copie de l'invoice {...invoice
            // dans lequel on écrase customer
 
-           const response = await axios.post("http://127.0.0.1:8000/api/invoices",
-               {...invoice, customer:`/api/customers/${invoice.customer}`
+           if (editing) {
+               // ON FAIT DU PUT POUR LA MISE A JOUR
+               const response = axios.put("http://127.0.0.1:8000/api/invoices/"+id,
+                   {
+                       ...invoice, customer: `/api/customers/${invoice.customer}`
+                   });
+               console.log(response);
 
-               });
-           // TODO FLASH NOTIFICATION
-           history.replace("/invoices");
+               // TODO FLASH NOTIFICATION
+               history.replace("/invoices");
+           } else {
+               // ON FAIT DU POST
+               const response = await axios.post("http://127.0.0.1:8000/api/invoices",
+                   {...invoice, customer:`/api/customers/${invoice.customer}`
+
+                   });
+               // TODO FLASH NOTIFICATION
+               history.replace("/invoices");
+           }
+
+
+
            // console.log(response);
            setErrors({});
        } catch (error) {
@@ -128,7 +153,7 @@ const InvoicePage = ({history, match}) => {
 
     return (
         <>
-            <h1>Création d'une facture</h1>
+            {editing && <h1>Modification du client</h1> || <h1>Création d'une facture</h1>}
 
             <form onSubmit={handleSubmit}>
                 <Field name="amount" label="Montant" placeholder="Montant de la facture" type="number"
