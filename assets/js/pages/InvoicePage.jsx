@@ -3,6 +3,7 @@ import Field from "../components/forms/Field";
 import Select from "../components/forms/Select";
 import {Link} from "react-router-dom";
 import customersAPI from "../services/customersAPI";
+import invoicesAPI from "../services/invoicesAPI";
 import axios from "axios";
 const InvoicePage = ({history, match}) => {
 
@@ -65,8 +66,10 @@ const InvoicePage = ({history, match}) => {
             console.log('fetchinvoice');
             console.log(id);
             // ON EXTRAIT LA DATA DE RESPONSE
-            const data = await axios.get("http://127.0.0.1:8000/api/invoices/"+id)
-                .then(response => response.data);
+            // const data = await axios.get("http://127.0.0.1:8000/api/invoices/"+id)
+            //    .then(response => response.data);
+            const data = await invoicesAPI.findFirst(id);
+
             console.log(data);
             const {amount, status, customer} = data;
 
@@ -75,7 +78,7 @@ const InvoicePage = ({history, match}) => {
             // setInvoice(data);
 
         } catch (error) {
-
+            history.replace('/invoices');
         }
     }
 
@@ -84,6 +87,7 @@ const InvoicePage = ({history, match}) => {
     // PARTIE 4-2 - ON MAP TOUS LES CUSTOMERS DANS LE SELECT DES CUSTOMER et on lance le fetchCustomer dans le UseEffect
 
     // PARTIE 5 - UTILISATION D'UN USE EFFECT
+    // récupération de la liste des cliens à chaque chargement du composant
     useEffect(() => {
         fetchCustomers();
     }, []);
@@ -91,6 +95,7 @@ const InvoicePage = ({history, match}) => {
     // PARTIE 7-3 - ENSUITE ON UTILISER UN EFFECT POUR DESCRIMINER CE QUE L'ON VEUT FAIRE
     // CE USEEFFECT DEPENT DE LA VARIABLE id
     // C'est a dire que si la variable id, change, ce second effet sera rappelé
+    // récupération de la bonne facture quant l'identifiant de l'url change
     useEffect(() => {
         // Fonction qui va chercher une facture
         if (id !== 'create') {
