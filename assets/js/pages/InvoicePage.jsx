@@ -4,7 +4,12 @@ import Select from "../components/forms/Select";
 import {Link} from "react-router-dom";
 import customersAPI from "../services/customersAPI";
 import axios from "axios";
-const InvoicePage = ({history}) => {
+const InvoicePage = ({history, match}) => {
+
+    // PARTIE 7-1 - DESTRUCTURATION DE L'id passé en paramètre que l'on sort de params
+    // PARTIE 7-2 - ENSUITE ON UTILISER UN EFFECT POUR DESCRIMINER CE QUE L'ON VEUT FAIRE
+
+    const { id = "create" } = match.params;
 
     // PARTIE 1 - CREATION D'UN STATE
     const [invoice, setInvoice] = useState({
@@ -37,7 +42,7 @@ const InvoicePage = ({history}) => {
 
         try {
             const data =  await customersAPI.findAll();
-            console.log(data);
+            // console.log(data);
             setCustomers(data);
 
             // PARTIE 6-1 - CUSTOMER
@@ -49,6 +54,28 @@ const InvoicePage = ({history}) => {
 
         }
     };
+
+    const fetchInvoice = async id => {
+        try {
+            console.log('fetchinvoice');
+            console.log(id);
+            // ON EXTRAIT LA DATA DE RESPONSE
+            const data = await axios.get("http://127.0.0.1:8000/api/invoices/"+id)
+                .then(response => response.data);
+            console.log(data);
+            const {amount, status, customer} = data;
+
+            console.log({amount, status, customer:customer.id});
+            setInvoice({amount, status, customer:customer.id});
+            // setInvoice(data);
+
+        } catch (error) {
+
+        }
+    }
+
+
+
     // PARTIE 4-2 - ON MAP TOUS LES CUSTOMERS DANS LE SELECT DES CUSTOMER et on lance le fetchCustomer dans le UseEffect
 
     // PARTIE 5 - UTILISATION D'UN USE EFFECT
@@ -56,6 +83,16 @@ const InvoicePage = ({history}) => {
         fetchCustomers();
     }, []);
 
+    // PARTIE 7-3 - ENSUITE ON UTILISER UN EFFECT POUR DESCRIMINER CE QUE L'ON VEUT FAIRE
+    // CE USEEFFECT DEPENT DE LA VARIABLE id
+    // C'est a dire que si la variable id, change, ce second effet sera rappelé
+    useEffect(() => {
+        // Fonction qui va chercher une facture
+        if (id !== 'create') {
+            fetchInvoice(id);
+
+        }
+    }, [id]);
 
     // PARTIE 6 - UNE FOIS NOTRE STRUCTURE POSE NOUS ALLONS SOUMMETTRE NOTRE FORMULAIRE
     const handleSubmit =  async (event) => {
@@ -73,7 +110,7 @@ const InvoicePage = ({history}) => {
                });
            // TODO FLASH NOTIFICATION
            history.replace("/invoices");
-           console.log(response);
+           // console.log(response);
            setErrors({});
        } catch (error) {
            const violations = error.response.data.violations;
