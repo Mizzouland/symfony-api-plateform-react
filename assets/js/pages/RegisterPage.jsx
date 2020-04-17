@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 import axios from 'axios';
 
 
-const RegisterPage = (props) => {
+const RegisterPage = ({history}) => {
     // STEP 1 - Création de l'utilisateur
     const [user, setUser] = useState({
         firstsame: "",
@@ -41,6 +41,8 @@ const RegisterPage = (props) => {
         try {
           const response = await axios.post("http://127.0.0.1:8000/api/users", user);
           console.log(response);
+          setErrors({});
+          history.replace('/login');
         } catch (error) {
             const {violations} = error.response.data;
 
