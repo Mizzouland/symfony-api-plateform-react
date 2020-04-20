@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import Field from "../components/forms/Field";
 import {Link} from "react-router-dom";
 import axios from 'axios';
+import { toast}  from "react-toastify";
 
 
 const RegisterPage = ({history}) => {
@@ -45,6 +46,8 @@ const RegisterPage = ({history}) => {
             apiErrors.passwordConfirm = "Votre confirmation de mot de passe n'est pas conforme à l'orginal";
             // la fonction s'arrete la , elle ne rentre pas dans le block try/catch
             setErrors(apiErrors);
+            toast.error("Des erreures dans votre formulaire !")
+
             return;
         }
 
@@ -53,6 +56,7 @@ const RegisterPage = ({history}) => {
           const response = await axios.post("http://127.0.0.1:8000/api/users", user);
           console.log(response);
           setErrors({});
+          toast.success("Vous êtes désormais inscrit, vous pouvez vous connecter !")
           history.replace('/login');
         } catch (error) {
             const {violations} = error.response.data;
@@ -63,6 +67,8 @@ const RegisterPage = ({history}) => {
                 });
                 setErrors(apiErrors);
             }
+            toast.error("Des erreures dans votre formulaire !")
+
         }
     }
 

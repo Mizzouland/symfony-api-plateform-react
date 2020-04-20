@@ -3,6 +3,8 @@ import Field from "../components/forms/Field";
 import {Link} from "react-router-dom";
 import axios from "axios";
 import customersAPI from "../services/customersAPI";
+import { toast}  from "react-toastify";
+
 
 const CustomerPage = (props) => {
 
@@ -26,9 +28,12 @@ const CustomerPage = (props) => {
             // on destructurise la constante data renvoyé par l'api
             const {firstname, lastname, email, company} = data;
             setCustomer({firstname, lastname, email, company});
+
         } catch (error) {
             console.log(error.response);
             // TODO : Notification flash d'une erreure
+            toast.error("Le client n'a pas être chargé !");
+
             props.history.replace("/customers");
         }
     };
@@ -82,22 +87,26 @@ const CustomerPage = (props) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
+            setErrors({});
             if (editing) {
                 const response =  await customersAPI.update(id, customer);
                 console.log(response.data);
                 // TODO : FLASH DE NOTIFICATION DE SUCCES
+                toast.success("Le client à bien été modifié !");
+
 
             } else {
                 // je vais attendre la réponse de axios avec une requete en post
                 // et quant on envoie une requete en post nous ajoutons un objet qui sera customer
                 const response =  await customersAPI.create(customer);
+                toast.success("Le client à bien été crée !");
 
                 // TODO : FLASH DE NOTIFICATION DE SUCCES
                 props.history.replace("/customers")
             }
 
 
-           setErrors({});
+
         } catch (error) {
             const violations = error.response.data.violations;
             const apiErrors = {};
@@ -108,6 +117,7 @@ const CustomerPage = (props) => {
             }
             setErrors(apiErrors);
             // TODO : FLASH DE NOTIFICATION DES ERREURES
+            toast.error("Des erreures dans votre formulaire");
 
         }
     };

@@ -4,6 +4,9 @@ import Pagination from "../components/Pagination";
 
 import customersAPI from "../services/customersAPI";
 import {Link} from "react-router-dom";
+import { toast}  from "react-toastify";
+import TableLoader from "../loaders/TableLoader";
+
 
 const CustomersPage =  (props) => {
 
@@ -11,13 +14,18 @@ const CustomersPage =  (props) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState('');
 
+    // PAR DEFAUT NOUS SOMMES EN TRAIN DE CHARGER LES DONNEES
+    const [loading, setLoading] = useState(true);
 
     const fetchCustomers = async () => {
         try {
             const data = await customersAPI.findAll();
             setCustomers(data);
+            setLoading(false);
         } catch (error) {
             console.log(error.response);
+            toast.error("Impossible de charger les clients");
+
         }
     };
 
@@ -70,9 +78,12 @@ const CustomersPage =  (props) => {
         // deux version de promesse
         try {
             await axios.delete("http://127.0.0.1:8000/api/customers/" + id);
+            toast.success("Suppression du cliente effectué avec succès");
+
         } catch (error) {
             // si cela n'a pas marché, je remet dans mon tableau le tableau original
             setCustomers(originalCustomers);
+            toast.error("Impossible de supprimer le client");
 
             console.log(error.response)
         }
@@ -146,6 +157,7 @@ const CustomersPage =  (props) => {
                     </tr>
                     </thead>
 
+                    {!loading && (
                     <tbody>
                     {paginatedCustomers.map(customer =>
 
@@ -153,7 +165,7 @@ const CustomersPage =  (props) => {
                         <tr key={customer.id}>
                             <td>{customer.id}</td>
                             <td>
-                                <a href="#">{customer.firstname} {customer.lastname}</a>
+                                <Link to={"/customer/" + customer.id}>{customer.firstname} {customer.lastname}</Link>
                             </td>
                             <td>{customer.email}</td>
                             <td>{customer.company}</td>
@@ -165,7 +177,9 @@ const CustomersPage =  (props) => {
                                 {customer.totalInvoices.toLocaleString()} euro
                             </td>
                             <td>
-                                <a href="#" className="btn btn-primary btn-sm mr-2">Editer</a>
+                                <Link to={"/customer/" + customer.id} className="btn btn-primary btn-sm mr-2">
+                                    Editer
+                                </Link>
                                 <button
                                     onClick={ () => handleDelete(customer.id)}
                                     disabled={customer.invoices.length > 0}
@@ -174,8 +188,10 @@ const CustomersPage =  (props) => {
                         </tr>
                     )}
                     </tbody>
+                    )}
 
                 </table>
+                {loading && <TableLoader />}
 
 
                 {itemPerPage < filteredCustomers.length &&

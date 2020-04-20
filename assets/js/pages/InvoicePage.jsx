@@ -5,6 +5,11 @@ import {Link} from "react-router-dom";
 import customersAPI from "../services/customersAPI";
 import invoicesAPI from "../services/invoicesAPI";
 import axios from "axios";
+import { toast}  from "react-toastify";
+
+
+
+
 const InvoicePage = ({history, match}) => {
 
     // PARTIE 7-1 - DESTRUCTURATION DE L'id passé en paramètre que l'on sort de params
@@ -56,6 +61,7 @@ const InvoicePage = ({history, match}) => {
                 setInvoice({...invoice, customer: data[0].id})
             }
         } catch (error) {
+            toast.error("Impossible de charger les clients");
             console.log(error.response);
 
         }
@@ -78,6 +84,7 @@ const InvoicePage = ({history, match}) => {
             // setInvoice(data);
 
         } catch (error) {
+            toast.error("Impossible de charger la facture demandée");
             history.replace('/invoices');
         }
     }
@@ -127,6 +134,8 @@ const InvoicePage = ({history, match}) => {
                console.log(response);
 
                // TODO FLASH NOTIFICATION
+               toast.success("La facture à bien été modifiée");
+
                history.replace("/invoices");
            } else {
                // ON FAIT DU POST
@@ -135,6 +144,8 @@ const InvoicePage = ({history, match}) => {
 
                    });
                // TODO FLASH NOTIFICATION
+               toast.success("La facture à bien été crée");
+
                history.replace("/invoices");
            }
 
@@ -152,6 +163,8 @@ const InvoicePage = ({history, match}) => {
            }
            setErrors(apiErrors);
            // TODO : FLASH DE NOTIFICATION DES ERREURES
+           toast.error("Des erreures dans votre formulaire");
+
 
        }
     };

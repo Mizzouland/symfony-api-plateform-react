@@ -3,6 +3,8 @@ import axios from "axios";
 import Pagination from "../components/Pagination";
 import moment from "moment";
 import {Link} from "react-router-dom";
+import { toast}  from "react-toastify";
+import TableLoader from "../loaders/TableLoader";
 
 
 const STATUS_CLASSES = {
@@ -25,6 +27,9 @@ const InvoicesPage = props => {
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState('');
 
+    // PAR DEFAUT NOUS SOMMES EN TRAIN DE CHARGER LES DONNEES
+    const [loading, setLoading] = useState(true);
+
     // RECUPERER LES INVOICES AUPRES DE L'API
     const fetchInvoices = async () => {
         try {
@@ -32,8 +37,9 @@ const InvoicesPage = props => {
                 .then(response => response.data['hydra:member']);
 
             setInvoices(data);
+            setLoading(false);
         } catch (error) {
-            console.log(error.response);
+            toast.error("Erreur lors du chargement des factures");
         }
     };
 
@@ -54,8 +60,10 @@ const InvoicesPage = props => {
 
         try {
             await axios.delete("http://127.0.0.1:8000/api/invoices/" + id);
+            toast.success("La facture à bien été supprimée ");
         } catch (error) {
             console.log(error);
+            toast.error("Une erreure est survenue");
             setInvoices(originalInvoices);
         }
     };
@@ -117,7 +125,8 @@ const InvoicesPage = props => {
                       <th>Action</th>
                   </tr>
               </thead>
-              <tbody>
+              {!loading && (
+                  <tbody>
 
               {paginatedCustomers.map(invoice =>
                   <tr key={invoice.id}>
@@ -140,7 +149,11 @@ const InvoicesPage = props => {
               )}
 
               </tbody>
+              )}
           </table>
+
+          {loading && <TableLoader />}
+
 
           <Pagination
               currentPage={currentPage}
