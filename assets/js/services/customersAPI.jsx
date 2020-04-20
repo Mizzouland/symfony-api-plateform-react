@@ -1,5 +1,6 @@
 import axios from "axios";
 import Cache from "./cache";
+import {CUSTOMER_API, CUSTOMER_API_2} from "../config";
 
 async function findAll()
 {
@@ -7,7 +8,7 @@ async function findAll()
     if (cachedCustomers != null) {
         return cachedCustomers;
     } else {
-        const result = axios.get("http://127.0.0.1:8000/api/clients")
+        const result = axios.get(CUSTOMER_API_2)
             .then(response =>{
                 const customers =  response.data["hydra:member"];
                 Cache.set("customers", customers);
@@ -25,7 +26,7 @@ function deleteCustomer(id)
     // EN REALITE QUANT ON VA RECEVOIR LA REPONSE QUI NOUS DIT QUE CELA A ETE SUPPRIME
     // ON VA BIEN SUR LE SUPPRIMER DU CACHE
 
-    return axios.delete("http://127.0.0.1:8000/api/customers/"+id)
+    return axios.delete(CUSTOMER_API+"/"+id)
         .then(async response => {
             const cachedCustomers = await Cache.get("customers");
             if (cachedCustomers != null) {
@@ -42,7 +43,7 @@ async function findFirst(id)
     if (cachedCustomer) {
         return cachedCustomer;
     } else {
-        return axios.get("http://127.0.0.1:8000/api/customers/" + id)
+        return axios.get(CUSTOMER_API+"/"+id)
             .then(response => {
                 const customer = response.data;
                 Cache.set("customers."+id, customer);
@@ -55,7 +56,7 @@ async function findFirst(id)
 
 function update(id, customer)
 {
-    return axios.put('http://127.0.0.1:8000/api/customers/'+id, customer)
+    return axios.put(CUSTOMER_API+"/"+id, customer)
         .then( async response => {
             const cachedCustomers = await Cache.get("customers");
             const cachedCustomer = await Cache.get("customers."+id);
@@ -83,7 +84,7 @@ function update(id, customer)
 
 function create(customer)
 {
-    return axios.post('http://127.0.0.1:8000/api/customers', customer)
+    return axios.post(CUSTOMER_API, customer)
         .then(async response => {
             const cachedCustomers = await Cache.get("customers");
             if (cachedCustomers != null) {
