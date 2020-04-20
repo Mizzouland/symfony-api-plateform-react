@@ -37,7 +37,18 @@ const RegisterPage = ({history}) => {
     const handleSubmit = async event => {
         event.preventDefault();
         console.log(user);
-        
+
+        // STEP 5 - GESTION DE LA CONFIRMATION DU MOT DE PASSE
+        const apiErrors = {};
+
+        if (user.password != user.passwordConfirm) {
+            apiErrors.passwordConfirm = "Votre confirmation de mot de passe n'est pas conforme à l'orginal";
+            // la fonction s'arrete la , elle ne rentre pas dans le block try/catch
+            setErrors(apiErrors);
+            return;
+        }
+
+
         try {
           const response = await axios.post("http://127.0.0.1:8000/api/users", user);
           console.log(response);
@@ -47,7 +58,6 @@ const RegisterPage = ({history}) => {
             const {violations} = error.response.data;
 
             if (violations) {
-                const apiErrors = {};
                 violations.forEach(violation => {
                     apiErrors[violation.propertyPath] = violation.message;
                 });
