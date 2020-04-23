@@ -6,6 +6,7 @@ import customersAPI from "../services/customersAPI";
 import invoicesAPI from "../services/invoicesAPI";
 import axios from "axios";
 import { toast}  from "react-toastify";
+import {INVOICES_API} from "../config";
 
 
 
@@ -127,7 +128,7 @@ const InvoicePage = ({history, match}) => {
 
            if (editing) {
                // ON FAIT DU PUT POUR LA MISE A JOUR
-               const response = axios.put("http://127.0.0.1:8000/api/invoices/"+id,
+               const response = axios.put(INVOICES_API+id,
                    {
                        ...invoice, customer: `/api/customers/${invoice.customer}`
                    });
@@ -139,7 +140,7 @@ const InvoicePage = ({history, match}) => {
                history.replace("/invoices");
            } else {
                // ON FAIT DU POST
-               const response = await axios.post("http://127.0.0.1:8000/api/invoices",
+               const response = await axios.post(INVOICES_API,
                    {...invoice, customer:`/api/customers/${invoice.customer}`
 
                    });

@@ -5,6 +5,7 @@ import moment from "moment";
 import {Link} from "react-router-dom";
 import { toast}  from "react-toastify";
 import TableLoader from "../loaders/TableLoader";
+import {INVOICES_API} from "../config";
 
 
 const STATUS_CLASSES = {
@@ -33,7 +34,7 @@ const InvoicesPage = props => {
     // RECUPERER LES INVOICES AUPRES DE L'API
     const fetchInvoices = async () => {
         try {
-            const data = await axios.get("http://127.0.0.1:8000/api/invoices")
+            const data = await axios.get(INVOICES_API)
                 .then(response => response.data['hydra:member']);
 
             setInvoices(data);
@@ -59,7 +60,7 @@ const InvoicesPage = props => {
         setInvoices(invoices.filter(invoice => invoice.id !== id));
 
         try {
-            await axios.delete("http://127.0.0.1:8000/api/invoices/" + id);
+            await axios.delete(INVOICES_API + id);
             toast.success("La facture à bien été supprimée ");
         } catch (error) {
             console.log(error);
